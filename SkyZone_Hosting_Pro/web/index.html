@@ -1,0 +1,43 @@
+<!doctype html><html lang="he"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>SkyZone Hosting — הזמנה</title>
+<style>
+body{font-family:system-ui,Segoe UI,Arial; background:#0b1220; color:#e6edf3; margin:0; padding:2rem;}
+.card{max-width:860px; margin:auto; background:#111827; border:1px solid #1f2937; border-radius:14px; padding:24px;}
+h1{margin-top:0} .row{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;}
+.plan{background:#0f172a; border:1px solid #334155; border-radius:12px; padding:12px;}
+label{display:block; margin:.5rem 0 .25rem} input,select,button{width:100%; padding:.7rem; border-radius:10px; border:1px solid #334155; background:#0b1220; color:#e6edf3}
+button{background:#1f6feb; border:none; font-weight:700; cursor:pointer} .ok{color:#30d158}
+</style>
+</head><body>
+<div class="card">
+<h1>SkyZone Hosting — הזמנה</h1>
+<div class="row">
+  <div class="plan"><h3>Basic</h3><div>2 vCPU • 4GB RAM • 40GB</div></div>
+  <div class="plan"><h3>Pro</h3><div>4 vCPU • 8GB RAM • 120GB</div></div>
+  <div class="plan"><h3>VIP</h3><div>6 vCPU • 16GB RAM • 300GB</div></div>
+</div>
+<form id="f" style="margin-top:16px">
+  <label>שם מלא</label><input name="fullName" required/>
+  <label>אימייל</label><input name="email" type="email" required/>
+  <label>חבילה</label>
+  <select name="plan"><option>basic</option><option>pro</option><option>vip</option></select>
+  <label>API URL</label><input name="api" placeholder="http://YOUR_SERVER:8080/api/order" required/>
+  <button type="submit">שלח הזמנה</button>
+</form>
+<p id="msg"></p>
+</div>
+<script>
+document.getElementById('f').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(e.target).entries());
+  try{
+    const r = await fetch(data.api, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({fullName:data.fullName, email:data.email, plan:data.plan})});
+    const j = await r.json();
+    document.getElementById('msg').innerHTML = j.ok ? `<b class="ok">נקלט! מס׳ הזמנה: ${j.order.id}</b>` : `שגיאה: ${j.error}`;
+  }catch(err){
+    document.getElementById('msg').innerText = 'שגיאת רשת';
+  }
+});
+</script>
+</body></html>
